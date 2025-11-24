@@ -1,9 +1,7 @@
 package com.innowise.logisticsbase.base;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -12,10 +10,9 @@ import com.innowise.logisticsbase.terminal.Terminal;
 
 public class LogisticsBase {
   private final AtomicInteger goods = new AtomicInteger(0);
-  private final List<Terminal> terminals = new ArrayList<>();
+  private final Deque<Terminal> freeTerminals = new ArrayDeque<>();
   private final Lock lock = new ReentrantLock();
-  private final Condition terminalAvailable = lock.newCondition();
-  private final Set<Terminal> busyTerminals = new HashSet<>();
+  private final Deque<Condition> waitingQueue = new ArrayDeque<>();
 
   private LogisticsBase() {}
 
@@ -28,26 +25,30 @@ public class LogisticsBase {
   }
 
   public void addTerminal(Terminal terminal) {
-    terminals.add(terminal);
+    freeTerminals.addLast(terminal);
   }
 
-  //TODO: change try/catch, exception handling?
-  public Terminal acquireFreeTerminal() {
+  public Terminal acquireTerminal(boolean isUrgent) {
     lock.lock();
     try {
-      while (true) {
-        for (Terminal terminal : terminals) {
-          if (!busyTerminals.contains(terminal)) {
-            busyTerminals.add(terminal);
-            return terminal;
-          }
-        }
-        try{
-          terminalAvailable.await();
-        }catch (InterruptedException e){
-          Thread.currentThread().interrupt();
-        }
+      if (!freeTerminals.isEmpty()) {
+        return freeTerminals.pollFirst();
       }
+
+      Condition condition = lock.newCondition();
+      if (isUrgent) {
+        waitingQueue.addFirst(condition);
+      } else {
+        waitingQueue.addLast(condition);
+      }
+
+      try {
+        condition.await();
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+
+      return freeTerminals.pollFirst();
     } finally {
       lock.unlock();
     }
@@ -56,8 +57,11 @@ public class LogisticsBase {
   public void releaseTerminal(Terminal terminal) {
     lock.lock();
     try {
-      busyTerminals.remove(terminal);
-      terminalAvailable.signalAll();
+      freeTerminals.addLast(terminal);
+      Condition next = waitingQueue.pollFirst();
+      if (next != null) {
+        next.signal();
+      }
     } finally {
       lock.unlock();
     }

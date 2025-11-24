@@ -11,22 +11,25 @@ import org.apache.logging.log4j.Logger;
 public class Truck implements Runnable {
   private static final Logger logger = LogManager.getLogger(Truck.class);
 
-  private static final int UNITS_PER_SECOND = 2;
+  private static final int UNITS_PER_SECOND = 5;
   private final int id;
   private final int cargoAmount;
+  private final boolean isUrgent;
 
-  public Truck(int id, int cargoAmount) {
+  public Truck(int id, int cargoAmount, boolean isUrgent) {
     this.id = id;
     this.cargoAmount = cargoAmount;
+    this.isUrgent = isUrgent;
   }
 
-  //TODO: would be rewritten using state pattern
   @Override
   public void run() {
     LogisticsBase base = LogisticsBase.getInstance();
+    logger.info("Truck {} started (urgent={})", id, isUrgent);
 
-    Terminal terminal = base.acquireFreeTerminal();
-    logger.info(LogColor.GREEN + "Truck {} arrived and occupied terminal {}" + LogColor.RESET, id, terminal.id());
+    Terminal terminal = base.acquireTerminal(isUrgent);
+    logger.info(LogColor.GREEN + "Truck {} (urgent={}) arrived and occupied terminal {}" + LogColor.RESET,
+            id, isUrgent, terminal.id());
 
     int seconds = cargoAmount / UNITS_PER_SECOND;
     try {
@@ -36,7 +39,8 @@ public class Truck implements Runnable {
     }
 
     base.addGoods(cargoAmount);
-    logger.info(LogColor.YELLOW + "Truck {} unloaded {} goods. Current amount on base: {}" + LogColor.RESET, id, cargoAmount, base.getGoods());
+    logger.info(LogColor.YELLOW + "Truck {} unloaded {} goods. Current amount on base: {}" + LogColor.RESET,
+            id, cargoAmount, base.getGoods());
 
     logger.info(LogColor.CYAN + "Truck {} departed from terminal {}" + LogColor.RESET, id, terminal.id());
 
