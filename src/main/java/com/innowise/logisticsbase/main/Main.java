@@ -1,8 +1,8 @@
 package com.innowise.logisticsbase.main;
 
-import com.innowise.logisticsbase.base.LogisticsBase;
-import com.innowise.logisticsbase.terminal.Terminal;
-import com.innowise.logisticsbase.truck.Truck;
+import com.innowise.logisticsbase.entity.LogisticsBase;
+import com.innowise.logisticsbase.entity.Terminal;
+import com.innowise.logisticsbase.entity.Truck;
 
 import java.util.Random;
 

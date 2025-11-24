@@ -1,6 +1,6 @@
 package com.innowise.logisticsbase.parser;
 
-import com.innowise.logisticsbase.truck.Truck;
+import com.innowise.logisticsbase.entity.Truck;
 
 import java.util.List;
 

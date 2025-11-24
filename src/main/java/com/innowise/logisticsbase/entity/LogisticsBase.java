@@ -1,4 +1,4 @@
-package com.innowise.logisticsbase.base;
+package com.innowise.logisticsbase.entity;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import com.innowise.logisticsbase.terminal.Terminal;
 
 public class LogisticsBase {
   private final AtomicInteger goods = new AtomicInteger(0);

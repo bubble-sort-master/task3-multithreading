@@ -1,7 +1,5 @@
-package com.innowise.logisticsbase.truck;
+package com.innowise.logisticsbase.entity;
 
-import com.innowise.logisticsbase.base.LogisticsBase;
-import com.innowise.logisticsbase.terminal.Terminal;
 import com.innowise.logisticsbase.util.LogColor;
 
 import java.util.concurrent.TimeUnit;
