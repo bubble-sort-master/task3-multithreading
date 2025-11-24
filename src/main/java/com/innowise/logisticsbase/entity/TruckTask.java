@@ -1,5 +1,5 @@
 package com.innowise.logisticsbase.entity;
 
-public enum TruckTaskType {
+public enum TruckTask {
   LOAD, UNLOAD
 }

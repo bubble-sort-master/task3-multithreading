@@ -3,6 +3,7 @@ package com.innowise.logisticsbase.main;
 import com.innowise.logisticsbase.entity.LogisticsBase;
 import com.innowise.logisticsbase.entity.Terminal;
 import com.innowise.logisticsbase.entity.Truck;
+import com.innowise.logisticsbase.entity.TruckTask;
 
 import java.util.Random;
 
@@ -19,8 +20,10 @@ public class Main {
     for (int i = 1; i <= 20; i++) {
       int cargo = 10 + (i * 5);
       boolean isUrgent = random.nextBoolean();
-      Thread truck = new Thread(new Truck(i, cargo, isUrgent));
-      truck.start();
+      TruckTask task = random.nextBoolean() ? TruckTask.LOAD : TruckTask.UNLOAD;
+
+      Thread truckThread = new Thread(new Truck(i, cargo, isUrgent, task));
+      truckThread.start();
     }
   }
 }

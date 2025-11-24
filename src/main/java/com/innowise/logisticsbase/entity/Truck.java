@@ -1,5 +1,7 @@
 package com.innowise.logisticsbase.entity;
 
+import com.innowise.logisticsbase.state.TruckState;
+import com.innowise.logisticsbase.state.impl.StartDrivingState;
 import com.innowise.logisticsbase.util.LogColor;
 
 import java.util.concurrent.TimeUnit;
@@ -9,39 +11,54 @@ import org.apache.logging.log4j.Logger;
 public class Truck implements Runnable {
   private static final Logger logger = LogManager.getLogger(Truck.class);
 
-  private static final int UNITS_PER_SECOND = 5;
   private final int id;
   private final int cargoAmount;
-  private final boolean isUrgent;
+  private final boolean urgent;
+  private TruckState state;
+  private TruckTask task;
 
-  public Truck(int id, int cargoAmount, boolean isUrgent) {
+  public Truck(int id, int cargoAmount, boolean urgent, TruckTask task) {
     this.id = id;
     this.cargoAmount = cargoAmount;
-    this.isUrgent = isUrgent;
+    this.urgent = urgent;
+    this.state = new StartDrivingState();
+    this.task = task;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setState(TruckState state) {
+    this.state = state;
+  }
+
+  public TruckTask getTask() {
+    return task;
+  }
+
+  public int getCargoAmount() {
+    return cargoAmount;
+  }
+
+  public TruckState getState() {
+    return state;
   }
 
   @Override
   public void run() {
+    state.handle(this);//started
     LogisticsBase base = LogisticsBase.getInstance();
-    logger.info("Truck {} started (urgent={})", id, isUrgent);
+    Terminal terminal = base.acquireTerminal(urgent);
 
-    Terminal terminal = base.acquireTerminal(isUrgent);
-    logger.info(LogColor.GREEN + "Truck {} (urgent={}) arrived and occupied terminal {}" + LogColor.RESET,
-            id, isUrgent, terminal.id());
+    state.handle(this);//executing task
 
-    int seconds = cargoAmount / UNITS_PER_SECOND;
-    try {
-      TimeUnit.SECONDS.sleep(seconds);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-
-    base.addGoods(cargoAmount);
-    logger.info(LogColor.YELLOW + "Truck {} unloaded {} goods. Current amount on base: {}" + LogColor.RESET,
-            id, cargoAmount, base.getGoods());
-
-    logger.info(LogColor.CYAN + "Truck {} departed from terminal {}" + LogColor.RESET, id, terminal.id());
-
+    state.handle(this);//departed
     base.releaseTerminal(terminal);
   }
+
+  public boolean isUrgent() {
+    return urgent;
+  }
+
 }

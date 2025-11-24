@@ -8,7 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LogisticsBase {
-  private final AtomicInteger goods = new AtomicInteger(0);
+  private final AtomicInteger goodsAmount = new AtomicInteger(0); //TODO: proper amount handling
   private final Deque<Terminal> freeTerminals = new ArrayDeque<>();
   private final Lock lock = new ReentrantLock();
   private final Deque<Condition> waitingQueue = new ArrayDeque<>();
@@ -67,10 +67,14 @@ public class LogisticsBase {
   }
 
   public void addGoods(int amount) {
-    goods.addAndGet(amount);
+    goodsAmount.addAndGet(amount);
   }
 
-  public int getGoods() {
-    return goods.get();
+  public int getGoodsAmount() {
+    return goodsAmount.get();
+  }
+
+  public void removeGoods(int amount){
+    goodsAmount.addAndGet(-amount);
   }
 }
