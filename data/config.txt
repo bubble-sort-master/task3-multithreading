@@ -1,0 +1,4 @@
+trucks.count=20
+terminals.count=5
+cargo.min=10
+cargo.max=100

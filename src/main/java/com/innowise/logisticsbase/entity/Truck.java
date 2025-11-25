@@ -7,6 +7,8 @@ import com.innowise.logisticsbase.util.LogColor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Objects;
+
 public class Truck implements Runnable {
   private static final Logger logger = LogManager.getLogger(Truck.class);
 
@@ -67,6 +69,35 @@ public class Truck implements Runnable {
   public void depart(LogisticsBase base, Terminal terminal){
     state.handle(this);
     base.releaseTerminal(terminal);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Truck)) return false;
+    Truck truck = (Truck) o;
+    return id == truck.id &&
+            cargoAmount == truck.cargoAmount &&
+            urgent == truck.urgent &&
+            Objects.equals(state, truck.state) &&
+            task == truck.task;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, cargoAmount, urgent, state, task);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("Truck{");
+    sb.append("id=").append(id)
+            .append(", cargoAmount=").append(cargoAmount)
+            .append(", urgent=").append(urgent)
+            .append(", state=").append(state)
+            .append(", task=").append(task)
+            .append('}');
+    return sb.toString();
   }
 
 }
