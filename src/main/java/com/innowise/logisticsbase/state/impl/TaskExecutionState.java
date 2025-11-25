@@ -32,7 +32,7 @@ public class TaskExecutionState implements TruckState {
         case UNLOAD: logger.info(LogColor.YELLOW + "Truck {} (urgent == {}) is unloading {} units of cargo..." + LogColor.RESET, id, urgent, cargoAmount);
           base.removeGoods(cargoAmount);
           break;
-        default: logger.error("truck behavior not found");
+        default: logger.warn("truck behavior not found");
       }
       TimeUnit.SECONDS.sleep(workingTime);
     } catch (InterruptedException e) {

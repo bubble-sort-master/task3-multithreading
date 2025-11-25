@@ -4,7 +4,6 @@ import com.innowise.logisticsbase.state.TruckState;
 import com.innowise.logisticsbase.state.impl.StartDrivingState;
 import com.innowise.logisticsbase.util.LogColor;
 
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
