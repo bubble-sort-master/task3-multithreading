@@ -20,14 +20,19 @@ public class TaskExecutionState implements TruckState {
 
     int id = truck.getId();
     int cargoAmount = truck.getCargoAmount();
+    boolean urgent = truck.isUrgent();
+
     int workingTime = truck.getCargoAmount() / UNITS_PER_SECOND;
     try {
       switch (truck.getTask()) {
         case LOAD :
-          logger.info(LogColor.YELLOW + "Truck {} is loading {} units of cargo..." + LogColor.RESET, id, cargoAmount);
+          logger.info(LogColor.YELLOW + "Truck {} (urgent == {}) is loading {} units of cargo..." + LogColor.RESET, id, urgent, cargoAmount);
           base.addGoods(cargoAmount);
-        case UNLOAD: logger.info(LogColor.YELLOW + "Truck {} is unloading {} units of cargo..." + LogColor.RESET, id,cargoAmount);
+          break;
+        case UNLOAD: logger.info(LogColor.YELLOW + "Truck {} (urgent == {}) is unloading {} units of cargo..." + LogColor.RESET, id, urgent, cargoAmount);
           base.removeGoods(cargoAmount);
+          break;
+        default: logger.error("truck behavior not found");
       }
       TimeUnit.SECONDS.sleep(workingTime);
     } catch (InterruptedException e) {

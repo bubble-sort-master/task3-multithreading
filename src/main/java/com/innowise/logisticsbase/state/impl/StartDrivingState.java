@@ -12,7 +12,7 @@ public class StartDrivingState implements TruckState {
 
   @Override
   public void handle(Truck truck) {
-      logger.info(LogColor.GREEN + "Truck {} started driving (task={}, urgent={})" + LogColor.RESET,
+      logger.info(LogColor.CYAN + "Truck {} started driving (task={}, urgent={})" + LogColor.RESET,
               truck.getId(), truck.getTask(), truck.isUrgent());
       truck.setState(new TaskExecutionState());
   }

@@ -47,18 +47,27 @@ public class Truck implements Runnable {
 
   @Override
   public void run() {
-    state.handle(this);//started
+    state.handle(this);
     LogisticsBase base = LogisticsBase.getInstance();
     Terminal terminal = base.acquireTerminal(urgent);
 
-    state.handle(this);//executing task
+    executeTask(terminal);
 
-    state.handle(this);//departed
-    base.releaseTerminal(terminal);
+    depart(base, terminal);
   }
 
   public boolean isUrgent() {
     return urgent;
+  }
+
+  public void executeTask(Terminal terminal){
+    logger.info(LogColor.YELLOW + "Truck {} (urgent == {}) has taken terminal {}" + LogColor.RESET, id, urgent, terminal.id());
+    state.handle(this);
+  }
+
+  public void depart(LogisticsBase base, Terminal terminal){
+    state.handle(this);
+    base.releaseTerminal(terminal);
   }
 
 }

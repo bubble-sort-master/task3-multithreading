@@ -11,7 +11,7 @@ public class DepartedState implements TruckState {
 
   @Override
   public void handle(Truck truck) {
-    logger.info(LogColor.CYAN + "Truck {} has departed (urgent={})" + LogColor.RESET,
+    logger.info(LogColor.GREEN + "Truck {} has departed (urgent={})" + LogColor.RESET,
             truck.getId(), truck.isUrgent());
   }
 }
